@@ -1,15 +1,35 @@
 const { log } = console;
 
-function hiHello() {
-  console.log('hello world');
-}
+const attempt = 0;
+// const retryer = retry(() => {
+//   if (++attempt % 2) throw new Error('test');
+//   else return attempt;
+// }, 2);
+// retryer() => 2
 
-function getFunctionBody(func) {
-  return func.toString();
-  // return Function.prototype.toString.call(func);
+function retry(func, attempts) {
+  let currentAttempts = 0;
+  const retryer = () => {
+    try {
+      currentAttempts += 1;
+      return func();
+    } catch {
+      if (currentAttempts <= attempts) {
+        retryer();
+      }
+      return attempts;
+    }
+  };
+  return retryer;
 }
+// throw new Error('Not implemented');
 
-log(getFunctionBody(hiHello));
+log(
+  retry(() => {
+    if (0) throw new Error('test');
+    else return 'attempt';
+  }, 2)()
+);
 
 // toString()
 //   .replace(/^[^{]*{\s*/, '')
