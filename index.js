@@ -1,36 +1,17 @@
 const { log } = console;
 
-const attempt = 0;
-// const retryer = retry(() => {
-//   if (++attempt % 2) throw new Error('test');
-//   else return attempt;
-// }, 2);
-// retryer() => 2
+function logger(func, logFunc) {
+  return (...args) => {
+    const out = `${func.name} ${args.join()} $VAR`;
 
-function retry(func, attempts) {
-  let currentAttempts = 0;
-  const retryer = () => {
-    try {
-      currentAttempts += 1;
-      return func();
-    } catch {
-      if (currentAttempts <= attempts) {
-        retryer();
-      }
-      return attempts;
-    }
+    logFunc(out.replace('$VAR', 'statrs'));
+    const result = func();
+    logFunc(out.replace('$VAR', 'statrs'));
+
+    return result;
   };
-  return retryer;
 }
-// throw new Error('Not implemented');
 
-log(
-  retry(() => {
-    if (0) throw new Error('test');
-    else return 'attempt';
-  }, 2)()
-);
+const l = logger(log, log);
 
-// toString()
-//   .replace(/^[^{]*{\s*/, '')
-//   .replace(/\s*}[^}]*$/, '');
+log(l(1, 2, 3));
